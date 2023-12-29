@@ -2,6 +2,8 @@
 
 #[cfg(test)]
 mod mock;
+#[cfg(test)]
+mod tests;
 
 //Re-export
 pub use pallet::*;
