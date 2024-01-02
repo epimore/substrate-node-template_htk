@@ -80,3 +80,16 @@ fn trans_claim_failed_when_wrong_owner() {
         Error::<Test>::NotClaimOwner);
     });
 }
+
+#[test]
+fn check_claim_owner_when_trans() {
+    new_test_ext().execute_with(|| {
+        let claim = BoundedVec::try_from(vec![0, 1]).unwrap();
+        let _ = PoeModule::create_claim(RuntimeOrigin::signed(1), claim.clone());
+        assert_eq!(Proofs::<Test>::get(&claim),
+                   Some((1, frame_system::Pallet::<Test>::block_number())));
+        PoeModule::trans_claim(RuntimeOrigin::signed(1), claim.clone(), 2).unwrap();
+        assert_eq!(Proofs::<Test>::get(&claim),
+                   Some((2, frame_system::Pallet::<Test>::block_number())));
+    });
+}
