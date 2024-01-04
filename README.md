@@ -13,5 +13,6 @@
 ##截图 
 节点正常运行
 ![网页运行截图](/pallets/kitties/class_two_screenshot.png)
+![网页运行截图](/pallets/kitties/class-two-screenshot2.png)
 完整测试用例
 ![网页运行截图](/pallets/kitties/class-two-screenshot1.png)
