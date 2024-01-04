@@ -57,7 +57,7 @@ pub mod pallet {
         /// Event documentation should end with an array that provides descriptive names for event
         /// parameters. [something, who]
         KittyCreated { who: T::AccountId, kitty_id: KittyId, kitty: Kitty },
-        KittyBred { who: T::AccountId, kitty_id: KittyId, kitty: Kitty },
+        KittyBreed { who: T::AccountId, kitty_id: KittyId, kitty: Kitty },
         KittyTransferred { from: T::AccountId, to: T::AccountId, kitty_id: KittyId },
     }
 
@@ -119,7 +119,7 @@ pub mod pallet {
             Kitties::<T>::insert(kitty_id, &kitty);
             KittyOwner::<T>::insert(kitty_id, &who);
             KittyParents::<T>::insert(kitty_id, (kitty_id_1, kitty_id_2));
-            Self::deposit_event(Event::KittyBred { who, kitty_id, kitty });
+            Self::deposit_event(Event::KittyBreed { who, kitty_id, kitty });
             Ok(())
         }
 
