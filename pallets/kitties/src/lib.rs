@@ -16,7 +16,9 @@ pub mod pallet {
     use frame_system::pallet_prelude::*;
 
     use sp_io::hashing::blake2_128;
-    use frame_support::traits::{Randomness, Currency, ReservableCurrency};
+    use frame_support::traits::{Randomness, Currency, ExistenceRequirement};
+    use frame_support::PalletId;
+    use sp_runtime::traits::AccountIdConversion;
 
     pub type KittyId = u32;
     pub type BalanceOf<T> = <<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
@@ -34,9 +36,10 @@ pub mod pallet {
         /// Because this pallet emits events, it depends on the runtime's definition of an event.
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         type Randomness: Randomness<Self::Hash, BlockNumberFor<Self>>;
-        type Currency: ReservableCurrency<Self::AccountId>;
+        type Currency: Currency<Self::AccountId>;
         #[pallet::constant]
         type KittyPrice: Get<BalanceOf<Self>>;
+        type PalletId: Get<PalletId>;
     }
 
     #[pallet::storage]
@@ -103,7 +106,10 @@ pub mod pallet {
 
             //质押预留
             let price = T::KittyPrice::get();
-            T::Currency::reserve(&who, price)?;
+            // T::Currency::reserve(&who, price)?;
+            //发起账号转移到account_id，发起交易时保持最小余额
+            T::Currency::transfer(&who, &Self::get_account_id(), price, ExistenceRequirement::KeepAlive)?;
+
 
             Kitties::<T>::insert(kitty_id, &kitty);
             KittyOwner::<T>::insert(kitty_id, &who);
@@ -137,7 +143,8 @@ pub mod pallet {
 
             //质押预留
             let price = T::KittyPrice::get();
-            T::Currency::reserve(&who, price)?;
+            // T::Currency::reserve(&who, price)?;
+            T::Currency::transfer(&who, &Self::get_account_id(), price, ExistenceRequirement::KeepAlive)?;
 
             Kitties::<T>::insert(kitty_id, &kitty);
             KittyOwner::<T>::insert(kitty_id, &who);
@@ -181,8 +188,9 @@ pub mod pallet {
             ensure!(Self::kitty_on_sale(kitty_id).is_some(),Error::<T>::NotOnSale);
 
             let price = T::KittyPrice::get();
-            T::Currency::reserve(&who, price)?;
-            T::Currency::unreserve(&owner, price);
+            // T::Currency::reserve(&who, price)?;
+            // T::Currency::unreserve(&owner, price);
+            T::Currency::transfer(&who, &owner, price, ExistenceRequirement::KeepAlive)?;
 
             <KittyOwner<T>>::insert(kitty_id, &who);
             <KittyOnSale<T>>::remove(kitty_id);
@@ -207,6 +215,10 @@ pub mod pallet {
                            &sender,
                            <frame_system::Pallet<T>>::extrinsic_index());
             payload.using_encoded(blake2_128)
+        }
+
+        fn get_account_id() -> T::AccountId {
+            T::PalletId::get().into_account_truncating()
         }
     }
 }
