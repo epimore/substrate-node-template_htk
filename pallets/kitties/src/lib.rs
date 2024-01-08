@@ -68,6 +68,7 @@ pub mod pallet {
         KittyBreed { who: T::AccountId, kitty_id: KittyId, kitty: Kitty },
         KittyTransferred { from: T::AccountId, to: T::AccountId, kitty_id: KittyId },
         KittyOnSale { who: T::AccountId, kitty_id: KittyId },
+        KittyBought { who: T::AccountId, kitty_id: KittyId },
     }
 
     // Errors inform users that something went wrong.
@@ -185,6 +186,8 @@ pub mod pallet {
 
             <KittyOwner<T>>::insert(kitty_id, &who);
             <KittyOnSale<T>>::remove(kitty_id);
+
+            Self::deposit_event(Event::KittyBought { who, kitty_id });
 
             Ok(())
         }
