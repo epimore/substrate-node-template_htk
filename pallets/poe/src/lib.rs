@@ -114,7 +114,6 @@ pub mod pallet {
 
             let current_block = <frame_system::Pallet<T>>::block_number();
 
-            //接收者 插入数据， 发起者是否需要移除数据？
             Proofs::<T>::insert(&claim, (recipient.clone(), current_block));
 
             Self::deposit_event(Event::ClaimTransed(sender, claim, recipient));
