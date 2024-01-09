@@ -58,8 +58,9 @@ pub mod pallet {
 
     #[pallet::call] // <-- Step 6. code block will replace this.
     impl<T: Config> Pallet<T> {
+        #[pallet::weight(10_000 + T::DbWeight::get().writes(1).ref_time())]
         #[pallet::call_index(1)]
-        #[pallet::weight(0)]
+        // #[pallet::weight(0)]
         pub fn create_claim(origin: OriginFor<T>, claim: BoundedVec<u8, T::MaxClaimLength>) -> DispatchResult {
             // Check that the extrinsic was signed and get the signer.
             // This function will return an error if the extrinsic is not signed.
@@ -78,7 +79,8 @@ pub mod pallet {
             Ok(().into())
         }
 
-        #[pallet::weight(0)]
+        // #[pallet::weight(0)]
+        #[pallet::weight(10_000 + T::DbWeight::get().writes(1).ref_time())]
         #[pallet::call_index(2)]
         pub fn revoke_claim(origin: OriginFor<T>, claim: BoundedVec<u8, T::MaxClaimLength>) -> DispatchResult {
             // Check that the extrinsic was signed and get the signer.
@@ -99,7 +101,8 @@ pub mod pallet {
             Ok(().into())
         }
 
-        #[pallet::weight(0)]
+        // #[pallet::weight(0)]
+        #[pallet::weight(10_000 + T::DbWeight::get().writes(1).ref_time())]
         #[pallet::call_index(3)]
         pub fn trans_claim(
             origin: OriginFor<T>,

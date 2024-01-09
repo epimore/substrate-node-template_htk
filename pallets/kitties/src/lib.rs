@@ -145,10 +145,10 @@ pub mod pallet {
             ensure!(Kitties::<T>::contains_key(kitty_id_2),Error::<T>::InvalidKittyId);
 
             let kitty_id = Self::get_next_id()?;
-            let kitty_1 = Self::kitties(kitty_id_1).ok_or(Error::<T>::InvalidKittyId)?;
-            let kitty_2 = Self::kitties(kitty_id_2).ok_or(Error::<T>::InvalidKittyId)?;
+            // let kitty_1 = Self::kitties(kitty_id_1).ok_or(Error::<T>::InvalidKittyId)?;
+            // let kitty_2 = Self::kitties(kitty_id_2).ok_or(Error::<T>::InvalidKittyId)?;
 
-            let selector = Self::random_value(&who);
+            // let selector = Self::random_value(&who);
             // let mut data = [0u8; 16];
             // for i in 0..kitty_1.0.len() {
             //     //0 kitty2,1 kitty1
