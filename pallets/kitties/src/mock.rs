@@ -1,11 +1,13 @@
+use frame_support::parameter_types;
 use crate as pallet_kitties;
-use frame_support::traits::{ConstU16, ConstU64};
+use frame_support::traits::{ConstU128, ConstU16, ConstU64};
 use sp_core::H256;
 use sp_runtime::{
     traits::{BlakeTwo256, IdentityLookup},
     BuildStorage,
 };
 use pallet_insecure_randomness_collective_flip;
+use pallet_balances;
 
 type Block = frame_system::mocking::MockBlock<Test>;
 
@@ -16,8 +18,10 @@ frame_support::construct_runtime!(
 		System: frame_system,
 		KittiesModule: pallet_kitties,
 		Randomness:pallet_insecure_randomness_collective_flip,
+        Balances: pallet_balances,
 	}
 );
+
 
 impl frame_system::Config for Test {
     type RuntimeEvent = RuntimeEvent;
@@ -36,7 +40,7 @@ impl frame_system::Config for Test {
     type DbWeight = ();
     type Version = ();
     type PalletInfo = PalletInfo;
-    type AccountData = ();
+    type AccountData = pallet_balances::AccountData<Balance>;
     type OnNewAccount = ();
     type OnKilledAccount = ();
     type SystemWeightInfo = ();
@@ -45,9 +49,38 @@ impl frame_system::Config for Test {
     type MaxConsumers = frame_support::traits::ConstU32<16>;
 }
 
+type Balance = u128;
+
+const EXISTENTIAL_DEPOSIT: u128 = 1000;
+
+use frame_support::PalletId;
+parameter_types! {
+	pub KittyPalletId:PalletId = PalletId(*b"py/kitty");
+	pub KittyPrice:Balance = EXISTENTIAL_DEPOSIT*10;
+}
+
+impl pallet_balances::Config for Test {
+    type RuntimeEvent = RuntimeEvent;
+    type WeightInfo = ();
+    type Balance = Balance;
+    type DustRemoval = ();
+    type ExistentialDeposit = ConstU128<EXISTENTIAL_DEPOSIT>;
+    type AccountStore = System;
+    type ReserveIdentifier = [u8; 8];
+    type RuntimeHoldReason = ();
+    type FreezeIdentifier = ();
+    type MaxLocks = ();
+    type MaxReserves = ();
+    type MaxHolds = ();
+    type MaxFreezes = ();
+}
+
 impl pallet_kitties::Config for Test {
     type RuntimeEvent = RuntimeEvent;
     type Randomness = Randomness;
+    type Currency = Balances;
+    type KittyPrice = KittyPrice;
+    type PalletId = KittyPalletId;
 }
 
 impl pallet_insecure_randomness_collective_flip::Config for Test {}
